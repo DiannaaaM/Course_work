@@ -13,3 +13,5 @@ def read_xls_file(file_path):
         return df.to_dict(orient="records")
     else:
         print("Неверный формат файла")
+
+reader = read_xls_file("../data/operations.xls")
