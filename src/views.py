@@ -1,18 +1,12 @@
+import json
 import time
 from pathlib import Path
-import json
+
 import pandas as pd
 import requests
+import yfinance as yf
 
-
-def read_xls_file(file_path):
-    """Открытие файла с '.xls'"""
-    if Path(file_path).suffix.lower() == ".xls":
-        df = pd.read_excel(file_path)
-        return df.to_dict(orient="records")
-    else:
-        print("Неверный формат файла")
-
+from src.utils import read_xls_file
 
 reader = read_xls_file("../data/operations.xls")
 
@@ -59,21 +53,27 @@ cashbacks = get_cashback(total_sum)
 
 def top_transactions(reader):
     if reader is not None:
-        reader.sort(key=lambda item: item['Сумма операции'], reverse=True)
+
+        def sort_by_sum(item):
+            return item["Сумма операции"]
+
+        reader.sort(key=sort_by_sum, reverse=True)
+
         result = []
+        i = 0
         for transaction in reader:
-            i = 0
-            while i < 5:
-                date = transaction["Дата операции"]
-                amount = transaction["Сумма операции"]
-                category = transaction["Категория"]
-                description = transaction["Описание"]
-                result.append({
-                    "date": date,
-                    "amount": amount,
-                    "category": category,
-                    "description": description
-                })
+            if i < 5:
+                result.append(
+                    {
+                        "date": transaction["Дата операции"],
+                        "amount": transaction["Сумма операции"],
+                        "category": transaction["Категория"],
+                        "description": transaction["Описание"],
+                    }
+                )
+                i += 1
+            else:
+                break
         return result
     else:
         return None
@@ -90,34 +90,41 @@ def get_currency_rate(currency):
     return rate
 
 
+def get_stock_currency(stock):
+    ticker = yf.Ticker(stock)
+    todays_data = pd.DataFrame(ticker.history(period="1d"))
+    todays_data_dict = todays_data.to_dict(orient="records")
+    return todays_data_dict[0]["High"]
+
+
 def create_operations(read_xls_file):
-    data = {
-        "greeting": greeting(7),
-        "cards": [],
-        "top_transactions": [],
-        "currency_rates": [],
-        "stock_prices": []}
+    data = {"greeting": greeting(7), "cards": [], "top_transactions": [], "currency_rates": [], "stock_prices": []}
     if read_xls_file:
         for line in read_xls_file:
             card_number = card_numbers
             if card_number not in [card["last_digits"] for card in data["cards"]] and card_number is not None:
-                data["cards"].append({
-                    "last_digits": card_number,
-                    "total_spent": round(total_sum, 2),
-                    "cashback": cashbacks
-                })
+                data["cards"].append(
+                    {"last_digits": card_number, "total_spent": round(total_sum, 2), "cashback": cashbacks}
+                )
         data["top_transactions"].append(top_transactions)
-        data["currency_rates"].append(({
-      "currency": "USD",
-      "rate": round(get_currency_rate('USD'), 2)
-        },{
-      "currency": "EUR",
-      "rate": round(get_currency_rate('EUR'), 2)
-        },))
+        data["currency_rates"].append(
+            (
+                {"currency": "USD", "rate": round(get_currency_rate("USD"), 2)},
+                {"currency": "EUR", "rate": round(get_currency_rate("EUR"), 2)},
+            )
+        )
+        data["stock_prices"].append(
+            [
+                {"stock": "AAPL", "price": round(get_stock_currency("AAPL"), 2)},
+                {"stock": "AMZN", "price": round(get_stock_currency("AMZN"), 2)},
+                {"stock": "GOOGL", "price": round(get_stock_currency("GOOGL"), 2)},
+                {"stock": "MSFT", "price": round(get_stock_currency("MSFT"), 2)},
+                {"stock": "TSLA", "price": round(get_stock_currency("TSLA"), 2)},
+            ]
+        )
     return data
 
 
-# create_operations(read_xls_file("../data/operations.xls"))
 def write_data(create_operations):
     with open("../data/user_settings.json", "w", encoding="utf8") as f:
         json.dump(create_operations, f, ensure_ascii=False)
