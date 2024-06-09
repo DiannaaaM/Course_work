@@ -1,9 +1,7 @@
 import json
-import time
 from pathlib import Path
 
 import pandas as pd
-import requests
 
 
 def read_xls_file(file_path):
@@ -14,4 +12,13 @@ def read_xls_file(file_path):
     else:
         print("Неверный формат файла")
 
-reader = read_xls_file("../data/operations.xls")
+
+reader_operations = read_xls_file("../data/operations.xls")
+
+
+def read_user_settings(file_path):
+    with open(file_path, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+
+reader_settings = read_user_settings("user_settings.json")

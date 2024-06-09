@@ -1,14 +1,12 @@
 import json
 import time
 from pathlib import Path
-
+from datetime import datetime
 import pandas as pd
 import requests
 import yfinance as yf
 
-from src.utils import read_xls_file
-
-reader = read_xls_file("../data/operations.xls")
+from src.utils import reader_operations
 
 
 def greeting(hour):
@@ -30,7 +28,7 @@ def get_card_number(reader):
         return None
 
 
-card_numbers = get_card_number(reader)
+card_numbers = get_card_number(reader_operations)
 
 
 def total_sum_amount(reader, card_number):
@@ -41,7 +39,7 @@ def total_sum_amount(reader, card_number):
     return total
 
 
-total_sum = total_sum_amount(reader, card_numbers)
+total_sum = total_sum_amount(reader_operations, card_numbers)
 
 
 def get_cashback(total_sum):
@@ -79,7 +77,7 @@ def top_transactions(reader):
         return None
 
 
-top_transactions = top_transactions(reader)
+top_transactions = top_transactions(reader_operations)
 
 
 def get_currency_rate(currency):
@@ -130,4 +128,4 @@ def write_data(create_operations):
         json.dump(create_operations, f, ensure_ascii=False)
 
 
-write_data(create_operations(read_xls_file("../data/operations.xls")))
+write_data(create_operations(reader_operations))
