@@ -4,10 +4,11 @@ from pathlib import Path
 from typing import Any, List
 
 import pandas as pd
+
 from src.utils import reader_operations
 
 
-def filter_by_state(transactions):
+def filter_by_state(transactions: Any) -> list:
     """Функция, которая принимает на вход список транзакций
     и возвращает новый список, содержащий только те словари, у которых ключ содержит переданное в функцию значение."""
     result = []

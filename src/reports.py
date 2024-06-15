@@ -1,11 +1,12 @@
-from src.utils import reader_operations
-import pandas as pd
 from typing import Optional
 
-def wastes_by_category(transactions: pd.DataFrame, category: str, date: Optional[str] = None):
-    """
+import pandas as pd
 
-    """
+from src.utils import reader_operations
+
+
+def wastes_by_category(transactions: pd.DataFrame, category: str, date: Optional[str] = None):
+    """ """
     if date is None:
         date = pd.to_datetime("today")
     else:

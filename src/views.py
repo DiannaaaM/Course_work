@@ -1,13 +1,15 @@
 import json
+import logging
 import time
-from pathlib import Path
 from datetime import datetime
+from pathlib import Path
+from typing import Any
+
 import pandas as pd
 import requests
 import yfinance as yf
-from typing import Union
+
 from src.utils import reader_operations, setup_logging
-import logging
 
 logger = setup_logging()
 
@@ -31,20 +33,20 @@ def greeting(hour: str = None) -> str:
         return "Доброй ночи"
 
 
-def get_card_number(reader):
+def get_card_number(reader: Any) -> Any | None:
     """
     Возвращает номер карты пользователя.
     """
     if reader is not None:
         for transaction in reader:
             return transaction["Номер карты"]
-        logger.info(f"Successfully! Result - %s" % transaction)
+        logger.info("Successfully! Result - %s" % transaction)
     else:
         logger.info("Something went wrong in 'get_card_number' function")
         return None
 
 
-def total_sum_amount(reader, card_number):
+def total_sum_amount(reader: Any, card_number: Any) -> int:
     """
     Возвращает общую сумму всех транзакций пользователя.
     """
@@ -52,20 +54,20 @@ def total_sum_amount(reader, card_number):
     if card_number:
         for transaction in reader:
             total += transaction["Сумма операции"]
-    logger.info(f"Successfully! Result - %s" % total)
+    logger.info("Successfully! Result - %s" % total)
     return round(total)
 
 
-def get_cashback(total_sum):
+def get_cashback(total_sum: int) -> int:
     """
-    Возвращает количество кэшбеков, которые можно получить за определенную сумму.
+    Возвращает весь кешбек
     """
     res = total_sum // 100
-    logger.info(f"Successfully! Result - %s" % res)
+    logger.info("Successfully! Result - %s" % res)
     return res
 
 
-def top_transactions(reader):
+def top_transactions(reader: Any) -> list[dict[str, Any]] | None:
     """
     Возвращает топ-5 транзакций пользователя по сумме.
     """
@@ -91,14 +93,14 @@ def top_transactions(reader):
                 i += 1
             else:
                 break
-        logger.info(f"Successfully! Result - %s" % result)
+        logger.info("Successfully! Result - %s" % result)
         return result
     else:
         logger.info("Something went wrong in 'top_transactions' function...")
         return None
 
 
-def get_currency_rate(currency):
+def get_currency_rate(currency: str) -> Any:
     """
     Возвращает курс валюты.
     """
@@ -106,22 +108,24 @@ def get_currency_rate(currency):
     response = requests.get(url, headers={"apikey": "3rSvbvwxcoXm42v0GxQQSwJNSq42zpMZ"}, timeout=15)
     response_data = json.loads(response.text)
     rate = response_data["rates"]["RUB"]
-    logger.info(f"Successfully 'get_currency_rate' operation!")
+    logger.info("Successfully 'get_currency_rate' operation!")
     return rate
 
 
-def get_stock_currency(stock):
+def get_stock_currency(stock: str) -> Any:
     """
     Возвращает курс акции.
     """
     ticker = yf.Ticker(stock)
     todays_data = pd.DataFrame(ticker.history(period="1d"))
     todays_data_dict = todays_data.to_dict(orient="records")
-    logger.info(f"Successfully 'get_stock_currency' operation!")
+    logger.info("Successfully 'get_stock_currency' operation!")
     return todays_data_dict[0]["High"]
 
 
-def create_operations(read_xls_file, time, card_numbers, total_sum, cashbacks):
+def create_operations(
+    read_xls_file: Any, time: Any, card_numbers: Any, total_sum: Any, cashbacks: Any
+) -> Any:
     """
     Возвращает словарь с данными пользователя.
     """
@@ -149,11 +153,11 @@ def create_operations(read_xls_file, time, card_numbers, total_sum, cashbacks):
                 {"stock": "TSLA", "price": round(get_stock_currency("TSLA"), 2)},
             ]
         )
-        logger.info(f"Successfully 'create_operations' operation!")
+        logger.info("Successfully 'create_operations' operation!")
     return data
 
 
-def write_data(create_operations):
+def write_data(create_operations: Any) -> None:
     """
     Сохраняет словарь с данными пользователя в json файл.
     """
@@ -161,7 +165,7 @@ def write_data(create_operations):
         json.dump(create_operations, f, ensure_ascii=False)
 
 
-def main():
+def main() -> None:
     user_currency = input("Which currency would you like append to file?")
     user_stock = input("Which stock would you like append to file?")
     result = {"currency": user_currency.split(" "), "stock": user_stock.split(" ")}
