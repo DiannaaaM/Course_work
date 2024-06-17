@@ -14,7 +14,7 @@ from src.utils import reader_operations, setup_logging
 logger = setup_logging()
 
 
-def greeting(hour: str = None) -> str:
+def greeting(hour: Any) -> str:
     """
     Возвращает приветственное сообщение в зависимости от времени суток.
     """
@@ -22,7 +22,7 @@ def greeting(hour: str = None) -> str:
         hour = datetime.now()
     else:
         hour = datetime.strptime(hour, "%d.%m.%Y %H:%M")
-    hour = int(hour.hour)
+    hour = hour.hour
     if 5 < hour < 12:
         return "Доброе утро"
     elif 12 <= hour < 18:
@@ -123,9 +123,7 @@ def get_stock_currency(stock: str) -> Any:
     return todays_data_dict[0]["High"]
 
 
-def create_operations(
-    read_xls_file: Any, time: Any, card_numbers: Any, total_sum: Any, cashbacks: Any
-) -> Any:
+def create_operations(read_xls_file: Any, time: Any, card_numbers: Any, total_sum: Any, cashbacks: Any) -> Any:
     """
     Возвращает словарь с данными пользователя.
     """
@@ -182,4 +180,5 @@ def main() -> None:
     print("Result in file - 'user_settings.json")
 
 
-main()
+if __name__ == "__main__":
+    main()

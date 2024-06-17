@@ -1,7 +1,7 @@
 import json
 import re
 from pathlib import Path
-from typing import Any, List
+from typing import Any
 
 import pandas as pd
 

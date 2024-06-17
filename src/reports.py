@@ -1,11 +1,11 @@
-from typing import Optional
+from typing import Optional, Any
 
 import pandas as pd
 
 from src.utils import reader_operations
 
 
-def wastes_by_category(transactions: pd.DataFrame, category: str, date: Optional[str] = None):
+def wastes_by_category(transactions: pd.DataFrame, category: str, date: Optional[pd.Timestamp] = None) -> Any:
     """ """
     if date is None:
         date = pd.to_datetime("today")
@@ -17,4 +17,4 @@ def wastes_by_category(transactions: pd.DataFrame, category: str, date: Optional
 
 
 print(wastes_by_category(reader_operations, "Супермаркеты"))
-print(wastes_by_category(reader_operations, "Супермаркеты", "2021-01-01"))
+print(wastes_by_category(reader_operations, "Супермаркеты", pd.to_datetime("2021-01-01")))

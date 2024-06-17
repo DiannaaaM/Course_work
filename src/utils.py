@@ -1,9 +1,10 @@
 import json
 import logging
-from pathlib import Path
 from logging import Logger
-import pandas as pd
+from pathlib import Path
 from typing import Any
+
+import pandas as pd
 
 
 def read_xls_file(file_path: Any) -> Any:
@@ -15,16 +16,10 @@ def read_xls_file(file_path: Any) -> Any:
         print("Неверный формат файла")
 
 
-reader_operations = read_xls_file("../data/operations.xls")
-
-
 def read_user_settings(file_path: Any) -> Any:
     """ """
     with open(file_path, "r", encoding="utf-8") as f:
         return json.load(f)
-
-
-reader_settings = read_user_settings("user_settings.json")
 
 
 def setup_logging() -> Logger:
@@ -35,3 +30,7 @@ def setup_logging() -> Logger:
     logger.addHandler(console_handler)
     logger.setLevel(logging.INFO)
     return logger
+
+
+reader_operations = read_xls_file("../data/operations.xls")
+reader_settings = read_user_settings("user_settings.json")
