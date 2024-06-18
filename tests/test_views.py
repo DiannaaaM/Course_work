@@ -1,48 +1,51 @@
 import datetime
 import unittest
 from unittest import TestCase
+from typing import Any
+from pytest import fixture, mark
 
-from pytest import mark, fixture
+from src.views import get_card_number, get_cashback, greeting, total_sum_amount
 
-from src.views import greeting, get_card_number, total_sum_amount,get_cashback
 
 @fixture()
-def date_with_data():
+def date_with_data() -> Any:
     return [
-  {
-    'Дата операции': '31.05.2024 17:49:17',
-    'Дата платежа': '31.05.2024',
-    'Номер карты': '*1130',
-    'Статус': 'OK',
-    'Сумма операции': -5.0,
-    'Валюта операции': 'RUB',
-    'Сумма платежа': -5.0,
-    'Валюта платежа': 'RUB',
-    'Кэшбэк': None,
-    'Категория': 'Супермаркеты',
-    'MCC': 5411.0,
-    'Описание': 'SPAR',
-    'Бонусы (включая кэшбэк)': 0,
-    'Округление на инвесткопилку': 45.0,
-    'Сумма операции с округлением': 50.0
-  },
-  {
-    'Дата операции': '31.05.2024 17:49:03',
-    'Дата платежа': '31.05.2024',
-    'Номер карты': '*1130',
-    'Статус': 'OK',
-    'Сумма операции': -365.49,
-    'Валюта операции': 'RUB',
-    'Сумма платежа': -365.49,
-    'Валюта платежа': 'RUB',
-    'Кэшбэк': 3.0,
-    'Категория': 'Супермаркеты',
-    'MCC': 5411.0,
-    'Описание': 'SPAR',
-    'Бонусы (включая кэшбэк)': 3,
-    'Округление на инвесткопилку': 34.51,
-    'Сумма операции с округлением': 400.0
-  }]
+        {
+            "Дата операции": "31.05.2024 17:49:17",
+            "Дата платежа": "31.05.2024",
+            "Номер карты": "*1130",
+            "Статус": "OK",
+            "Сумма операции": -5.0,
+            "Валюта операции": "RUB",
+            "Сумма платежа": -5.0,
+            "Валюта платежа": "RUB",
+            "Кэшбэк": None,
+            "Категория": "Супермаркеты",
+            "MCC": 5411.0,
+            "Описание": "SPAR",
+            "Бонусы (включая кэшбэк)": 0,
+            "Округление на инвесткопилку": 45.0,
+            "Сумма операции с округлением": 50.0,
+        },
+        {
+            "Дата операции": "31.05.2024 17:49:03",
+            "Дата платежа": "31.05.2024",
+            "Номер карты": "*1130",
+            "Статус": "OK",
+            "Сумма операции": -365.49,
+            "Валюта операции": "RUB",
+            "Сумма платежа": -365.49,
+            "Валюта платежа": "RUB",
+            "Кэшбэк": 3.0,
+            "Категория": "Супермаркеты",
+            "MCC": 5411.0,
+            "Описание": "SPAR",
+            "Бонусы (включая кэшбэк)": 3,
+            "Округление на инвесткопилку": 34.51,
+            "Сумма операции с округлением": 400.0,
+        },
+    ]
+
 
 @mark.parametrize(
     "hour, expected",
@@ -56,13 +59,16 @@ def date_with_data():
 def test_greeting(hour: str, expected: str) -> None:
     assert greeting(hour) == expected
 
-def test_get_card_number(date_with_data):
+
+def test_get_card_number(date_with_data: Any) -> None:
     assert get_card_number(date_with_data) == "*1130"
     assert get_card_number(None) is None
 
-def test_total_sum_amount(date_with_data):
+
+def test_total_sum_amount(date_with_data: Any) -> None:
     assert total_sum_amount(date_with_data, "*1130") == 370
 
-def test_get_cashback():
+
+def test_get_cashback()-> None:
     assert get_cashback(370) == 3
     assert get_cashback(0) == 0
