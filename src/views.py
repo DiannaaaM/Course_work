@@ -9,10 +9,10 @@ import pandas as pd
 import requests
 import yfinance as yf
 
-from src.utils import reader_operations, setup_logging
+from src.utils import read_xls_file, setup_logging
 
 logger = setup_logging()
-
+reader_operations = read_xls_file("../data/operations.xls")
 
 def greeting(hour: Any) -> str:
     """
@@ -33,7 +33,7 @@ def greeting(hour: Any) -> str:
         return "Доброй ночи"
 
 
-def get_card_number(reader: Any) -> Any | None:
+def get_card_number(reader: Any) -> Any:
     """
     Возвращает номер карты пользователя.
     """
@@ -73,7 +73,7 @@ def top_transactions(reader: Any) -> list[dict[str, Any]] | None:
     """
     if reader is not None:
 
-        def sort_by_sum(item):
+        def sort_by_sum(item: Any) -> Any:
             return item["Сумма операции"]
 
         reader.sort(key=sort_by_sum, reverse=True)
@@ -164,9 +164,12 @@ def write_data(create_operations: Any) -> None:
 
 
 def main() -> None:
-    user_currency = input("Which currency would you like append to file?")
-    user_stock = input("Which stock would you like append to file?")
-    result = {"currency": user_currency.split(" "), "stock": user_stock.split(" ")}
+    """
+    Запускает программу.
+    """
+    user_currency = input("Which currency would you like append to file?").split(" ")
+    user_stock = input("Which stock would you like append to file?").split(" ")
+    result = {"currency": user_currency, "stock": user_stock}
     with open("user_settings.json", "w") as f:
         json.dump(result, f)
     time = input("Write date and time(format for input - DD.MM.YYYY HH:MM):")

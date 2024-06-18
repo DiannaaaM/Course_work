@@ -17,7 +17,9 @@ def read_xls_file(file_path: Any) -> Any:
 
 
 def read_user_settings(file_path: Any) -> Any:
-    """ """
+    """
+    Чтение файла с настройками пользователя.
+    """
     with open(file_path, "r", encoding="utf-8") as f:
         return json.load(f)
 
@@ -30,7 +32,3 @@ def setup_logging() -> Logger:
     logger.addHandler(console_handler)
     logger.setLevel(logging.INFO)
     return logger
-
-
-reader_operations = read_xls_file("../data/operations.xls")
-reader_settings = read_user_settings("user_settings.json")

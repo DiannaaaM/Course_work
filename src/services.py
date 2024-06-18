@@ -5,7 +5,9 @@ from typing import Any
 
 import pandas as pd
 
-from src.utils import reader_operations
+from src.utils import read_xls_file
+
+reader_operations = read_xls_file("../data/operations.xls")
 
 
 def filter_by_state(transactions: Any) -> list:
@@ -19,6 +21,3 @@ def filter_by_state(transactions: Any) -> list:
 
 
 translate = filter_by_state(reader_operations)
-
-for i in translate:
-    print(i)

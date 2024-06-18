@@ -1,12 +1,15 @@
-from typing import Optional, Any
+from typing import Any, Optional
 
 import pandas as pd
 
-from src.utils import reader_operations
+from src.utils import read_xls_file
+
+reader_operations = read_xls_file("../data/operations.xls")
 
 
 def wastes_by_category(transactions: pd.DataFrame, category: str, date: Optional[pd.Timestamp] = None) -> Any:
-    """ """
+    """Функция, которая принимает на вход список транзакций
+    и возвращает новый список, содержащий только те словари, у которых ключ содержит переданное в функцию значение."""
     if date is None:
         date = pd.to_datetime("today")
     else:
