@@ -1,5 +1,6 @@
 import json
 import logging
+import os
 import time
 from datetime import datetime
 from pathlib import Path
@@ -8,9 +9,12 @@ from typing import Any
 import pandas as pd
 import requests
 import yfinance as yf
+from dotenv import dotenv_values, load_dotenv
 
 from src.utils import read_xls_file, setup_logging
 
+load_dotenv()
+api_key = os.getenv("API_KEY")
 logger = setup_logging()
 reader_operations = read_xls_file("../data/operations.xls")
 
@@ -43,7 +47,7 @@ def get_card_number(reader: Any) -> Any:
             return transaction["Номер карты"]
         logger.info("Successfully! Result - %s" % transaction)
     else:
-        logger.info("Something went wrong in 'get_card_number' function")
+        logger.error("Something went wrong in 'get_card_number' function")
         return None
 
 
@@ -54,7 +58,7 @@ def total_sum_amount(reader: Any, card_number: Any) -> int:
     total = 0
     if card_number:
         for transaction in reader:
-            total += transaction["Сумма операции"] * -1
+            total += transaction["Сумма операции"]
     logger.info("Successfully! Result - %s" % total)
     return round(total)
 
@@ -97,16 +101,16 @@ def top_transactions(reader: Any) -> list[dict[str, Any]] | None:
         logger.info("Successfully! Result - %s" % result)
         return result
     else:
-        logger.info("Something went wrong in 'top_transactions' function...")
+        logger.error("Something went wrong in 'top_transactions' function...")
         return None
 
 
-def get_currency_rate(currency: str) -> Any:
+def get_currency_rate(currency: Any) -> Any:
     """
     Возвращает курс валюты.
     """
     url = f"https://api.apilayer.com/exchangerates_data/latest?symbols=RUB&base={currency}"
-    response = requests.get(url, headers={"apikey": "3rSvbvwxcoXm42v0GxQQSwJNSq42zpMZ"}, timeout=15)
+    response = requests.get(url, headers={"apikey": api_key}, timeout=15)
     response_data = json.loads(response.text)
     rate = response_data["rates"]["RUB"]
     logger.info("Successfully 'get_currency_rate' operation!")

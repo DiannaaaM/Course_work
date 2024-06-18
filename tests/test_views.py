@@ -1,50 +1,19 @@
 import datetime
+import json
 import unittest
-from unittest import TestCase
 from typing import Any
+from unittest import TestCase, mock
+from unittest.mock import Mock, patch
+
 from pytest import fixture, mark
 
-from src.views import get_card_number, get_cashback, greeting, total_sum_amount
+from src.utils import read_xls_file
+from src.views import get_card_number, get_cashback, get_currency_rate, get_stock_currency, greeting, total_sum_amount
 
 
 @fixture()
 def date_with_data() -> Any:
-    return [
-        {
-            "Дата операции": "31.05.2024 17:49:17",
-            "Дата платежа": "31.05.2024",
-            "Номер карты": "*1130",
-            "Статус": "OK",
-            "Сумма операции": -5.0,
-            "Валюта операции": "RUB",
-            "Сумма платежа": -5.0,
-            "Валюта платежа": "RUB",
-            "Кэшбэк": None,
-            "Категория": "Супермаркеты",
-            "MCC": 5411.0,
-            "Описание": "SPAR",
-            "Бонусы (включая кэшбэк)": 0,
-            "Округление на инвесткопилку": 45.0,
-            "Сумма операции с округлением": 50.0,
-        },
-        {
-            "Дата операции": "31.05.2024 17:49:03",
-            "Дата платежа": "31.05.2024",
-            "Номер карты": "*1130",
-            "Статус": "OK",
-            "Сумма операции": -365.49,
-            "Валюта операции": "RUB",
-            "Сумма платежа": -365.49,
-            "Валюта платежа": "RUB",
-            "Кэшбэк": 3.0,
-            "Категория": "Супермаркеты",
-            "MCC": 5411.0,
-            "Описание": "SPAR",
-            "Бонусы (включая кэшбэк)": 3,
-            "Округление на инвесткопилку": 34.51,
-            "Сумма операции с округлением": 400.0,
-        },
-    ]
+    return read_xls_file("../data/operations.xls")
 
 
 @mark.parametrize(
@@ -66,9 +35,34 @@ def test_get_card_number(date_with_data: Any) -> None:
 
 
 def test_total_sum_amount(date_with_data: Any) -> None:
-    assert total_sum_amount(date_with_data, "*1130") == 370
+    assert total_sum_amount(date_with_data, "*1130") == 2552
 
 
-def test_get_cashback()-> None:
+def test_get_cashback() -> None:
     assert get_cashback(370) == 3
     assert get_cashback(0) == 0
+
+
+@patch("requests.get")
+def test_get_currency_rate(mock_get: Any) -> None:
+    mock_response = {"rates": {"RUB": 75.0}}
+    mock_get.return_value.text = json.dumps(mock_response)
+    transaction = {"amount": 100, "currency": "USD"}
+    assert get_currency_rate(transaction) == 75.0
+
+
+def test_get_stock_currency() -> None:
+    mock_todays_data = mock.Mock()
+    mock_todays_data_dict = [{"High": 100.0}]
+    mock_todays_data.to_dict.return_value = mock_todays_data_dict
+
+    with mock.patch("src.views.yf", autospec=True) as mock_yf:
+        mock_ticker = mock.Mock()
+        mock_yf.Ticker.return_value = mock_ticker
+        mock_ticker.history.return_value = mock_todays_data
+
+        result = get_stock_currency("AAPL")
+
+        assert result == 100.0
+        mock_yf.Ticker.assert_called_once_with("AAPL")
+        mock_todays_data.to_dict.assert_called_once()

@@ -5,25 +5,6 @@ from pathlib import Path
 from typing import Any
 
 import pandas as pd
-
-
-def read_xls_file(file_path: Any) -> Any:
-    """Открытие файла '.xls'"""
-    if Path(file_path).suffix.lower() == ".xls":
-        df = pd.read_excel(file_path)
-        return df.to_dict(orient="records")
-    else:
-        print("Неверный формат файла")
-
-
-def read_user_settings(file_path: Any) -> Any:
-    """
-    Чтение файла с настройками пользователя.
-    """
-    with open(file_path, "r", encoding="utf-8") as f:
-        return json.load(f)
-
-
 def setup_logging() -> Logger:
     logger = logging.getLogger(__name__)
     console_handler = logging.StreamHandler()
@@ -33,6 +14,24 @@ def setup_logging() -> Logger:
     logger.setLevel(logging.INFO)
     return logger
 
+def read_xls_file(file_path: Any) -> Any:
+    """Открытие файла '.xls'"""
+    if Path(file_path).suffix.lower() == ".xls":
+        df = pd.read_excel(file_path)
+        return df.to_dict(orient="records")
+        logger.info("Successfully read file")
+    else:
+        logger.error("Wrong file format or Something went wrong")
+        print("Неверный формат файла")
 
-result = read_xls_file("../data/operations.xls")
-print(result)
+
+def read_user_settings(file_path: Any) -> Any:
+    """
+    Чтение файла с настройками пользователя.
+    """
+    with open(file_path, "r", encoding="utf-8") as f:
+        return json.load(f)
+    logger.info("Successfully read file")
+
+
+logger = setup_logging()
