@@ -11,7 +11,7 @@ import requests
 import yfinance as yf
 from dotenv import dotenv_values, load_dotenv
 
-from src.utils import read_xls_file, setup_logging
+from src.utils import read_xls_file, setup_logging, write_data
 
 load_dotenv()
 api_key = os.getenv("API_KEY")
@@ -158,14 +158,6 @@ def create_operations(greetin: Any, card_numbers: Any, total_sum: Any, cashbacks
         )
         logger.info("Successfully 'create_operations' operation!")
     return data
-
-
-def write_data(create_operations: Any) -> None:
-    """
-    Сохраняет словарь с данными пользователя в json файл.
-    """
-    with open("../data/user_settings.json", "w", encoding="utf8") as f:
-        json.dump(create_operations, f, ensure_ascii=False)
 
 
 def main_views() -> None:
