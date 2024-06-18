@@ -32,3 +32,6 @@ def setup_logging() -> Logger:
     logger.addHandler(console_handler)
     logger.setLevel(logging.INFO)
     return logger
+
+result = read_xls_file("../data/operations.xls")
+print(result)

@@ -14,6 +14,7 @@ from src.utils import read_xls_file, setup_logging
 logger = setup_logging()
 reader_operations = read_xls_file("../data/operations.xls")
 
+
 def greeting(hour: Any) -> str:
     """
     Возвращает приветственное сообщение в зависимости от времени суток.
@@ -53,7 +54,7 @@ def total_sum_amount(reader: Any, card_number: Any) -> int:
     total = 0
     if card_number:
         for transaction in reader:
-            total += transaction["Сумма операции"]
+            total += transaction["Сумма операции"] * -1
     logger.info("Successfully! Result - %s" % total)
     return round(total)
 
@@ -123,19 +124,19 @@ def get_stock_currency(stock: str) -> Any:
     return todays_data_dict[0]["High"]
 
 
-def create_operations(read_xls_file: Any, time: Any, card_numbers: Any, total_sum: Any, cashbacks: Any) -> Any:
+def create_operations(greetin: Any, card_numbers: Any, total_sum: Any, cashbacks: Any, top: Any) -> Any:
     """
     Возвращает словарь с данными пользователя.
     """
-    data = {"greeting": greeting(time), "cards": [], "top_transactions": [], "currency_rates": [], "stock_prices": []}
-    if read_xls_file:
-        for line in read_xls_file:
+    data = {"greeting": greetin, "cards": [], "top_transactions": [], "currency_rates": [], "stock_prices": []}
+    if reader_operations:
+        for line in reader_operations:
             card_number = card_numbers
             if card_number not in [card["last_digits"] for card in data["cards"]] and card_number is not None:
                 data["cards"].append(
                     {"last_digits": card_number, "total_spent": round(total_sum, 2), "cashback": cashbacks}
                 )
-        data["top_transactions"] = top_transactions(reader_operations)
+        data["top_transactions"] = top(reader_operations)
         data["currency_rates"].append(
             (
                 {"currency": "USD", "rate": round(get_currency_rate("USD"), 2)},
@@ -163,7 +164,7 @@ def write_data(create_operations: Any) -> None:
         json.dump(create_operations, f, ensure_ascii=False)
 
 
-def main() -> None:
+def main_views() -> None:
     """
     Запускает программу.
     """
@@ -178,10 +179,10 @@ def main() -> None:
     total_sum = total_sum_amount(reader_operations, card_numbers)
     cashbacks = get_cashback(total_sum)
     top = top_transactions(reader_operations)
-    created = create_operations(reader_operations, time, card_numbers, total_sum, cashbacks)
+    created = create_operations(greetin, card_numbers, total_sum, cashbacks, top)
     write_data(created)
     print("Result in file - 'user_settings.json")
 
 
 if __name__ == "__main__":
-    main()
+    main_views()

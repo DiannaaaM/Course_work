@@ -21,3 +21,14 @@ def filter_by_state(transactions: Any) -> list:
 
 
 translate = filter_by_state(reader_operations)
+
+
+def main_servies() -> None:
+    """
+    Функция выводит на печать список транзакций, соответствующих указанным критериям.
+    """
+    print(translate)
+
+
+if __name__ == "__main__":
+    main_servies()

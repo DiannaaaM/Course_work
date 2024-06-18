@@ -21,3 +21,15 @@ def wastes_by_category(transactions: pd.DataFrame, category: str, date: Optional
 
 print(wastes_by_category(reader_operations, "Супермаркеты"))
 print(wastes_by_category(reader_operations, "Супермаркеты", pd.to_datetime("2021-01-01")))
+
+
+def main_reports() -> None:
+    """
+    Функция, которая выводит на экран сумму потраченных денег на каждую категорию.
+    """
+    print(wastes_by_category(reader_operations, "Супермаркеты"))
+    print(wastes_by_category(reader_operations, "Супермаркеты", pd.to_datetime("2021-01-01")))
+
+
+if __name__ == "__main__":
+    main_reports()
