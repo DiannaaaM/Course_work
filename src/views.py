@@ -1,22 +1,19 @@
 import json
-import logging
 import os
-import time
 from datetime import datetime
-from pathlib import Path
 from typing import Any
 
 import pandas as pd
 import requests
 import yfinance as yf
-from dotenv import dotenv_values, load_dotenv
+from dotenv import load_dotenv
 
-from src.utils import read_xls_file, setup_logging, write_data
+from src.utils import read_files, setup_logging, write_data
 
 load_dotenv()
 api_key = os.getenv("API_KEY")
 logger = setup_logging()
-reader_operations = read_xls_file("../data/operations.xls")
+reader_operations = read_files("../data/operations.xls")
 
 
 def greeting(hour: Any) -> str:
@@ -135,12 +132,11 @@ def create_operations(greetin: Any, card_numbers: Any, total_sum: Any, cashbacks
     data = {"greeting": greetin, "cards": [], "top_transactions": [], "currency_rates": [], "stock_prices": []}
     if reader_operations:
         for line in reader_operations:
-            card_number = card_numbers
-            if card_number not in [card["last_digits"] for card in data["cards"]] and card_number is not None:
+            if card_numbers not in [card["last_digits"] for card in data["cards"]] and card_numbers is not None:
                 data["cards"].append(
-                    {"last_digits": card_number, "total_spent": round(total_sum, 2), "cashback": cashbacks}
+                    {"last_digits": card_numbers, "total_spent": round(total_sum, 2), "cashback": cashbacks}
                 )
-        data["top_transactions"] = top(reader_operations)
+        data["top_transactions"] = top
         data["currency_rates"].append(
             (
                 {"currency": "USD", "rate": round(get_currency_rate("USD"), 2)},
@@ -164,11 +160,11 @@ def main_views() -> None:
     """
     Запускает программу.
     """
-    user_currency = input("Which currency would you like append to file?").split(" ")
-    user_stock = input("Which stock would you like append to file?").split(" ")
+    user_currency = input("Which currency would you like append to file?").split(", ")
+    user_stock = input("Which stock would you like append to file?").split(", ")
     result = {"currency": user_currency, "stock": user_stock}
     with open("user_settings.json", "w") as f:
-        json.dump(result, f)
+        json.dump(result, f, ensure_ascii=False)
     time = input("Write date and time(format for input - DD.MM.YYYY HH:MM):")
     greetin = greeting(time if time else None)
     card_numbers = get_card_number(reader_operations)
@@ -176,9 +172,12 @@ def main_views() -> None:
     cashbacks = get_cashback(total_sum)
     top = top_transactions(reader_operations)
     created = create_operations(greetin, card_numbers, total_sum, cashbacks, top)
-    write_data(created)
-    print("Result in file - 'user_settings.json")
-
-
+    write_data("new.json", created)
+    result = read_files("new.json")
+    for key, value in result.items():
+        if key == "greeting":
+            print(value)
+        else:
+            print(f"{'' if key == 'greeting' else key} - {value}")
 if __name__ == "__main__":
     main_views()

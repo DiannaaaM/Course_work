@@ -1,19 +1,17 @@
-import datetime
 import json
-import unittest
 from typing import Any
-from unittest import TestCase, mock
-from unittest.mock import Mock, patch
+from unittest import mock
+from unittest.mock import patch
 
 from pytest import fixture, mark
 
-from src.utils import read_xls_file
+from src.utils import read_files
 from src.views import get_card_number, get_cashback, get_currency_rate, get_stock_currency, greeting, total_sum_amount
 
 
 @fixture()
 def date_with_data() -> Any:
-    return read_xls_file("../data/operations.xls")
+    return read_files("../data/operations.xls")
 
 
 @mark.parametrize(
@@ -51,7 +49,7 @@ def test_get_currency_rate(mock_get: Any) -> None:
     assert get_currency_rate(transaction) == 75.0
 
 
-def test_get_stock_currency() -> None:
+def test_get_stock_currency() -> None:  #Fix this test!!!!!!!!
     mock_todays_data = mock.Mock()
     mock_todays_data_dict = [{"High": 100.0}]
     mock_todays_data.to_dict.return_value = mock_todays_data_dict

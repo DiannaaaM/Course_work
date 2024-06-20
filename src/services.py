@@ -1,14 +1,8 @@
-import json
-import logging
-import re
-from pathlib import Path
 from typing import Any
 
-import pandas as pd
+from src.utils import read_files, setup_logging
 
-from src.utils import read_xls_file, setup_logging
-
-reader_operations = read_xls_file("../data/operations.xls")
+reader_operations = read_files("../data/operations.xls")
 logger = setup_logging()
 
 

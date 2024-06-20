@@ -3,18 +3,21 @@ from typing import Any, Optional
 
 import pandas as pd
 
-from src.utils import read_xls_file
+from src.utils import read_files, write_data
 
-reader_operations = read_xls_file("../data/operations.xls")
+reader_operations = read_files("../data/operations.xls")
 
 
 def report_to_file(file_name: Optional[str] = None) -> Any:
+    """
+    Функция, которая принимает на вход список транзакций
+    и возвращает новый список, содержащий только те словари, у которых ключ содержит переданное в функцию значение.
+    """
     def decorator(func: Any) -> Any:
         def wrapper(transactions: pd.DataFrame, category: str, date: Optional[pd.Timestamp] = None) -> Any:
             result = func(transactions, category, date)
             if file_name is None:
-                with open("report.txt", "a") as file:
-                    file.write(f"{category} total expenses: {result}\n")
+                write_data("reports.txt", result)
             else:
                 with open(file_name, "a") as file:
                     file.write(f"{category} total expenses: {result}\n")
