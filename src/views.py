@@ -13,7 +13,6 @@ from src.utils import read_files, setup_logging, write_data
 load_dotenv()
 api_key = os.getenv("API_KEY")
 logger = setup_logging()
-reader_operations = read_files("../data/operations.xls")
 
 
 def greeting(hour: Any) -> str:
@@ -130,8 +129,8 @@ def create_operations(greetin: Any, card_numbers: Any, total_sum: Any, cashbacks
     Возвращает словарь с данными пользователя.
     """
     data = {"greeting": greetin, "cards": [], "top_transactions": [], "currency_rates": [], "stock_prices": []}
-    if reader_operations:
-        for line in reader_operations:
+    if read_files("../data/operations.xls"):
+        for line in read_files("../data/operations.xls"):
             if card_numbers not in [card["last_digits"] for card in data["cards"]] and card_numbers is not None:
                 data["cards"].append(
                     {"last_digits": card_numbers, "total_spent": round(total_sum, 2), "cashback": cashbacks}
@@ -167,10 +166,10 @@ def main_views() -> None:
         json.dump(result, f, ensure_ascii=False)
     time = input("Write date and time(format for input - DD.MM.YYYY HH:MM):")
     greetin = greeting(time if time else None)
-    card_numbers = get_card_number(reader_operations)
-    total_sum = total_sum_amount(reader_operations, card_numbers)
+    card_numbers = get_card_number(read_files("../data/operations.xls"))
+    total_sum = total_sum_amount(read_files("../data/operations.xls"), card_numbers)
     cashbacks = get_cashback(total_sum)
-    top = top_transactions(reader_operations)
+    top = top_transactions(read_files("../data/operations.xls"))
     created = create_operations(greetin, card_numbers, total_sum, cashbacks, top)
     write_data("new.json", created)
     result = read_files("new.json")

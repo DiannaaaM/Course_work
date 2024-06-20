@@ -1,30 +1,64 @@
-from src.utils import read_files, setup_logging
+import pandas as pd
+from datetime import datetime, timedelta
+from typing import Any, Optional
+import json
+import logging
+
+from src.utils import read_files, write_data, setup_logging
 
 reader_operations = read_files("../data/operations.xls")
 logger = setup_logging()
 
+def report_to_file() -> Any:
+    """
+    Функция, которая принимает на вход список транзакций
+    и возвращает новый список, содержащий только те словари, у которых ключ содержит переданное в функцию значение.
+    """
 
-def filter_by_state(transactions: list) -> list:
+    def decorator(func: Any) -> Any:
+        def wrapper(transactions: pd.DataFrame, category: str, date: Optional[pd.Timestamp] = None) -> Any:
+            try:
+                result = func(transactions, category, date)
+                write_data("reports.txt", str(result))
+                return result
+            except Exception as e:
+                logger.error(f"Ошибка в функции {func.__name__}: {e}")
+                return None
+
+        return wrapper
+
+    return decorator
+
+
+@report_to_file()
+def wastes_by_category(transactions: pd.DataFrame, category: str, date: Optional[pd.Timestamp] = None) -> Any:
     """Функция, которая принимает на вход список транзакций
     и возвращает новый список, содержащий только те словари, у которых ключ содержит переданное в функцию значение."""
-    result = []
-    for transaction in transactions:
-        if "Переводы" in transaction["Категория"] and transaction["Описание"].endswith("."):
-            result.append(transaction["Описание"])
-    logger.info("Successfully! Result - %s" % result)
-    return result
+    transactions = pd.DataFrame(transactions)
+    if date is None:
+        date = pd.to_datetime("today")
+    else:
+        date = pd.to_datetime(date)
+
+    three_months_ago = (date - timedelta(days=90)).strftime("%Y-%m-%d")
+    transactions = transactions[transactions["Дата операции"] >= three_months_ago]
+    total = -transactions[transactions["Категория"] == category]["Сумма операции"].sum()
+    return round(total, 1)
 
 
-translate = filter_by_state(reader_operations)
-
-
-def main_servies() -> None:
+def main_reports() -> None:
     """
-    Функция выводит на печать список транзакций, соответствующих указанным критериям.
+    Функция, которая выводит на экран сумму потраченных денег на каждую категорию.
     """
-    for res in filter_by_state(reader_operations):
-        print(res, end="\n")
+    df = pd.DataFrame(
+        {
+            "Дата операции": ["2022-01-05", "2022-02-15", "2022-03-20", "2022-04-10"],
+            "Категория": ["food", "entertainment", "food", "transport"],
+            "Сумма операции": [50.0, 30.0, 40.0, 20.0],
+        }
+    )
+    print(wastes_by_category(df, "food", datetime(2022, 4, 10)))
 
 
 if __name__ == "__main__":
-    main_servies()
+    main_reports()

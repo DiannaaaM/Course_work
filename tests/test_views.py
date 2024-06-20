@@ -11,7 +11,7 @@ from src.views import get_card_number, get_cashback, get_currency_rate, get_stoc
 
 @fixture()
 def date_with_data() -> Any:
-    return read_files("../data/operations.xls")
+    return read_files("data/operations.xls")
 
 
 @mark.parametrize(

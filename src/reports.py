@@ -1,14 +1,15 @@
-from datetime import datetime
-from typing import Any, Optional
-
 import pandas as pd
+from datetime import datetime, timedelta
+from typing import Any, Optional
+import json
+import logging
 
-from src.utils import read_files, write_data
+from src.utils import read_files, write_data, setup_logging
 
-reader_operations = read_files("../data/operations.xls")
+# reader_operations = read_files("../data/operations.xls")
+logger = setup_logging()
 
-
-def report_to_file(file_name: Optional[str] = None) -> Any:
+def report_to_file() -> Any:
     """
     Функция, которая принимает на вход список транзакций
     и возвращает новый список, содержащий только те словари, у которых ключ содержит переданное в функцию значение.
@@ -16,13 +17,13 @@ def report_to_file(file_name: Optional[str] = None) -> Any:
 
     def decorator(func: Any) -> Any:
         def wrapper(transactions: pd.DataFrame, category: str, date: Optional[pd.Timestamp] = None) -> Any:
-            result = func(transactions, category, date)
-            if file_name is None:
+            try:
+                result = func(transactions, category, date)
                 write_data("reports.txt", result)
-            else:
-                with open(file_name, "a") as file:
-                    file.write(f"{category} total expenses: {result}\n")
-            return result
+                return result
+            except Exception as e:
+                logger.error(f"Ошибка в функции {func.__name__}: {e}")
+                return None
 
         return wrapper
 
@@ -38,7 +39,9 @@ def wastes_by_category(transactions: pd.DataFrame, category: str, date: Optional
         date = pd.to_datetime("today")
     else:
         date = pd.to_datetime(date)
-    transactions = transactions.query("`Дата операции` >= @date - pd.DateOffset(months=3)")
+
+    three_months_ago = date - timedelta(days=90)
+    transactions = transactions[transactions["Дата операции"] >= three_months_ago]
     total = -transactions[transactions["Категория"] == category]["Сумма операции"].sum()
     return round(total, 1)
 
