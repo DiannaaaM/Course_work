@@ -47,7 +47,7 @@ def write_data(filename: Any, create_operations: Any) -> None:
     """
     if filename.endswith(".txt"):
         with open(filename, "a") as file:
-            file.write()
+            file.write(create_operations)
     else:
         with open(filename, "w", encoding="utf8") as f:
             json.dump(create_operations, f, indent=4, ensure_ascii=False)

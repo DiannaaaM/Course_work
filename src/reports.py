@@ -13,6 +13,7 @@ def report_to_file(file_name: Optional[str] = None) -> Any:
     Функция, которая принимает на вход список транзакций
     и возвращает новый список, содержащий только те словари, у которых ключ содержит переданное в функцию значение.
     """
+
     def decorator(func: Any) -> Any:
         def wrapper(transactions: pd.DataFrame, category: str, date: Optional[pd.Timestamp] = None) -> Any:
             result = func(transactions, category, date)

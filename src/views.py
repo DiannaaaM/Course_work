@@ -178,6 +178,8 @@ def main_views() -> None:
         if key == "greeting":
             print(value)
         else:
-            print(f"{'' if key == 'greeting' else key} - {value}")
+            print(f"{'' if key == 'greeting' else key}: {value}")
+
+
 if __name__ == "__main__":
     main_views()

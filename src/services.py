@@ -1,12 +1,10 @@
-from typing import Any
-
 from src.utils import read_files, setup_logging
 
 reader_operations = read_files("../data/operations.xls")
 logger = setup_logging()
 
 
-def filter_by_state(transactions: Any) -> list:
+def filter_by_state(transactions: list) -> list:
     """Функция, которая принимает на вход список транзакций
     и возвращает новый список, содержащий только те словари, у которых ключ содержит переданное в функцию значение."""
     result = []
