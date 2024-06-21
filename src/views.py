@@ -3,7 +3,6 @@ import os
 from datetime import datetime
 from typing import Any
 
-import pandas as pd
 import requests
 import yfinance as yf
 from dotenv import load_dotenv
@@ -118,10 +117,13 @@ def get_stock_currency(stock: str) -> Any:
     Возвращает курс акции.
     """
     ticker = yf.Ticker(stock)
-    todays_data = pd.DataFrame(ticker.history(period="1d"))
-    todays_data_dict = todays_data.to_dict(orient="records")
-    logger.info("Successfully 'get_stock_currency' operation!")
-    return todays_data_dict[0]["High"]
+    todays_data = ticker.history(period="1d")
+
+    if not todays_data.empty:
+        high_price = todays_data["High"].iloc[0]
+        return high_price
+    else:
+        return 0.0
 
 
 def create_operations(greetin: Any, card_numbers: Any, total_sum: Any, cashbacks: Any, top: Any) -> Any:

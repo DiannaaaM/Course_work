@@ -1,13 +1,13 @@
-import pandas as pd
 from datetime import datetime, timedelta
 from typing import Any, Optional
-import json
-import logging
 
-from src.utils import read_files, write_data, setup_logging
+import pandas as pd
+
+from src.utils import setup_logging, write_data
 
 # reader_operations = read_files("../data/operations.xls")
 logger = setup_logging()
+
 
 def report_to_file() -> Any:
     """

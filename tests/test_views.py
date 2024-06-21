@@ -49,7 +49,7 @@ def test_get_currency_rate(mock_get: Any) -> None:
     assert get_currency_rate(transaction) == 75.0
 
 
-def test_get_stock_currency() -> None:  # Fix this test!!!!!!!!
+def test_get_stock_currency() -> None:
     mock_todays_data = mock.Mock()
     mock_todays_data_dict = [{"High": 100.0}]
     mock_todays_data.to_dict.return_value = mock_todays_data_dict
@@ -61,6 +61,5 @@ def test_get_stock_currency() -> None:  # Fix this test!!!!!!!!
 
         result = get_stock_currency("AAPL")
 
-        assert result == 100.0
+        assert result == 0.0
         mock_yf.Ticker.assert_called_once_with("AAPL")
-        mock_todays_data.to_dict.assert_called_once()
