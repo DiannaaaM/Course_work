@@ -174,12 +174,7 @@ def main_views() -> None:
     top = top_transactions(read_files("../data/operations.xls"))
     created = create_operations(greetin, card_numbers, total_sum, cashbacks, top)
     write_data("new.json", created)
-    result = read_files("new.json")
-    for key, value in result.items():
-        if key == "greeting":
-            print(value)
-        else:
-            print(f"{'' if key == 'greeting' else key}: {value}")
+    print(read_files("new.json"))
 
 
 if __name__ == "__main__":
