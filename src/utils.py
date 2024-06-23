@@ -44,7 +44,7 @@ def read_files(file_path: Any) -> Any:
         print("Неверный формат файла")
 
 
-def write_data(file_: str, results: str) -> None:
+def write_data(file_: str, results: Any) -> None:
     """
     Функция, которая записывает результаты в указанный файл.
     """

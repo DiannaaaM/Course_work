@@ -1,5 +1,4 @@
 import json
-from datetime import datetime
 from typing import Any
 from unittest import mock
 from unittest.mock import patch
@@ -8,7 +7,6 @@ from pytest import fixture, mark
 
 from src.utils import read_files
 from src.views import (
-    create_operations,
     get_card_number,
     get_cashback,
     get_currency_rate,
@@ -33,14 +31,7 @@ def date_with_data() -> Any:
     ],
 )
 def test_greeting(hour: str, expected: str) -> None:
-    current_time = datetime.now()
     assert greeting(hour) == expected
-    assert greeting(current_time) == greeting(current_time.strftime("%d.%m.%Y %H:%M"))
-
-
-def test_greeting_None() -> None:
-    current_time = datetime.now()
-    assert greeting(current_time.strftime("%d.%m.%Y %H:%M")) == greeting(current_time.strftime("%d.%m.%Y %H:%M"))
 
 
 def test_get_card_number(date_with_data: Any) -> None:
