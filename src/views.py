@@ -131,8 +131,8 @@ def create_operations(greetin: Any, card_numbers: Any, total_sum: Any, cashbacks
     Возвращает словарь с данными пользователя.
     """
     data = {"greeting": greetin, "cards": [], "top_transactions": [], "currency_rates": [], "stock_prices": []}
-    if read_files("data/operations.xls"):
-        for line in read_files("data/operations.xls"):
+    if read_files("../data/operations.xls"):
+        for line in read_files("../data/operations.xls"):
             if card_numbers not in [card["last_digits"] for card in data["cards"]] and card_numbers is not None:
                 data["cards"].append(
                     {"last_digits": card_numbers, "total_spent": round(total_sum, 2), "cashback": cashbacks}

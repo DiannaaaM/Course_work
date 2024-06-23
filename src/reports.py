@@ -19,7 +19,7 @@ def report_to_file() -> Any:
         def wrapper(transactions: pd.DataFrame, category: str, date: Optional[pd.Timestamp] = None) -> Any:
             try:
                 result = func(transactions, category, date)
-                write_data("reports.txt", result)
+                write_data("reports.txt", str(result))
                 return result
             except Exception as e:
                 logger.error(f"Ошибка в функции {func.__name__}: {e}")
@@ -41,7 +41,7 @@ def wastes_by_category(transactions: pd.DataFrame, category: str, date: Optional
         date = pd.to_datetime(date)
 
     three_months_ago = date - timedelta(days=90)
-    transactions = transactions[transactions["Дата операции"] >= three_months_ago]
+    transactions["Дата операции"] = pd.to_datetime(transactions["Дата операции"])
     total = -transactions[transactions["Категория"] == category]["Сумма операции"].sum()
     return round(total, 1)
 

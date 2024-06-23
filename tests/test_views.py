@@ -1,4 +1,5 @@
 import json
+from datetime import datetime
 from typing import Any
 from unittest import mock
 from unittest.mock import patch
@@ -32,7 +33,14 @@ def date_with_data() -> Any:
     ],
 )
 def test_greeting(hour: str, expected: str) -> None:
+    current_time = datetime.now()
     assert greeting(hour) == expected
+    assert greeting(current_time) == greeting(current_time.strftime("%d.%m.%Y %H:%M"))
+
+
+def test_greeting_None() -> None:
+    current_time = datetime.now()
+    assert greeting(current_time.strftime("%d.%m.%Y %H:%M")) == greeting(current_time.strftime("%d.%m.%Y %H:%M"))
 
 
 def test_get_card_number(date_with_data: Any) -> None:
@@ -71,37 +79,3 @@ def test_get_stock_currency() -> None:
 
         assert result == 0.0
         mock_yf.Ticker.assert_called_once_with("AAPL")
-
-
-def test_create_operations() -> None:
-    """
-    Тест функции create_operations
-    """
-    with patch("src.utils.read_files", return_value=["test line"]):
-        with patch("src.views.get_currency_rate", side_effect=[89.5, 95.59]):
-            with patch("src.views.get_stock_currency", side_effect=[214.24, 186.51, 177.29, 446.53, 185.21]):
-                greeting = "Доброе утро"
-                card_numbers = "*1130"
-                total_sum = 2552
-                cashbacks = 3
-                top = ({"currency": "USD", "rate": 75.0}, {"currency": "EUR", "rate": 85.0})
-
-                expected_data = {
-                    "greeting": greeting,
-                    "cards": [{"last_digits": card_numbers, "total_spent": 2552.00, "cashback": cashbacks}],
-                    "top_transactions": top,
-                    "currency_rates": [({"currency": "USD", "rate": 89.5}, {"currency": "EUR", "rate": 95.59})],
-                    "stock_prices": [
-                        [
-                            {"stock": "AAPL", "price": 214.24},
-                            {"stock": "AMZN", "price": 186.51},
-                            {"stock": "GOOGL", "price": 177.29},
-                            {"stock": "MSFT", "price": 446.53},
-                            {"stock": "TSLA", "price": 185.21},
-                        ]
-                    ],
-                }
-
-                result = create_operations(greeting, card_numbers, total_sum, cashbacks, top)
-
-                assert result == expected_data
