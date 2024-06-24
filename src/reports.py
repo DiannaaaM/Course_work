@@ -20,6 +20,7 @@ def report_to_file() -> Any:
             try:
                 result = func(transactions, category, date)
                 write_data("reports.txt", str(result))
+                logger.info(f"Successfully operation! Result - {result}")
                 return result
             except Exception as e:
                 logger.error(f"Ошибка в функции {func.__name__}: {e}")
@@ -43,4 +44,5 @@ def wastes_by_category(transactions: pd.DataFrame, category: str, date: Optional
     three_months_ago = date - timedelta(days=90)
     transactions["Дата операции"] = pd.to_datetime(transactions["Дата операции"])
     total = -transactions[transactions["Категория"] == category]["Сумма операции"].sum()
+    logger.info(f"Successfully operation! Result - {round(total, 1)}")
     return round(total, 1)
