@@ -6,14 +6,7 @@ from unittest.mock import patch
 from pytest import fixture, mark
 
 from src.utils import read_files
-from src.views import (
-    get_card_number,
-    get_cashback,
-    get_currency_rate,
-    get_stock_currency,
-    greeting,
-    total_sum_amount,
-)
+from src.views import get_card_number, get_cashback, get_currency_rate, get_stock_currency, greeting, total_sum_amount
 
 
 @fixture()

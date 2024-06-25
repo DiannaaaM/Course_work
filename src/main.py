@@ -48,8 +48,8 @@ def main() -> None:
         }
     )
     print(f'Views result:\n{read_files("new.json")}')
-    print(f'Servies result: \n{" ".join(translate)}')
-    print(f'Reports result: \n{wastes_by_category(df, "food", datetime(2022, 4, 10))}')
+    print(f"Servies result: \n{translate}")
+    print(f'Reports result: \n{wastes_by_category(df, "transport", datetime(2022, 4, 10))}')
 
 
 if __name__ == "__main__":
