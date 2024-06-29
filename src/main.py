@@ -40,16 +40,16 @@ def main() -> None:
     translate = filter_by_state(reader_operations)
 
     # reports
-    df = pd.DataFrame(
-        {
-            "Дата операции": ["2022-01-05", "2022-02-15", "2022-03-20", "2022-04-10"],
-            "Категория": ["food", "entertainment", "food", "transport"],
-            "Сумма операции": [50.0, 30.0, 40.0, 20.0],
-        }
-    )
+    # df = pd.DataFrame(
+    #     {
+    #         "Дата операции": ["2022-01-05", "2022-02-15", "2022-03-20", "2022-04-10"],
+    #         "Категория": ["food", "entertainment", "food", "transport"],
+    #         "Сумма операции": [50.0, 30.0, 40.0, 20.0],
+    #     }
+    # )
     print(f'Views result:\n{read_files("new.json")}')
     print(f'Servies result: \n{" ".join(translate)}')
-    print(f'Reports result: \n{wastes_by_category(df, "food", datetime(2022, 4, 10))}')
+    print(f'Reports result: \n{wastes_by_category(read_files(reader_operations), "food", datetime(2022, 4, 10))}')
 
 
 if __name__ == "__main__":
