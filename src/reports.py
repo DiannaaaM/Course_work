@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from typing import Any, Optional
+from typing import Any, Dict, Optional, Union
 
 import pandas as pd
 
@@ -40,7 +40,7 @@ def wastes_by_category(transactions: pd.DataFrame, category: str, date: Optional
         date = pd.to_datetime("today")
     else:
         date = pd.to_datetime(date)
-    result = {}
+    result: Dict[str, Union[Dict[Any, Any], str, float]] = {}
     three_months_ago = date - timedelta(days=90)
     transactions["Дата операции"] = pd.to_datetime(transactions["Дата операции"])
     total = -transactions[
