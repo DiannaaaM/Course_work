@@ -86,8 +86,7 @@ def main() -> None:
     # )
     print(f'Views result:\n{read_files("new.json")}')
     print(f"Servies result: \n{translate}")
-    print(f'Reports result: \n{wastes_by_category(read_files(reader_operations), "food", datetime(2022, 4, 10))}')
-
+    print(f'Reports result: \n{wastes_by_category("../data/operations.xls", "food", datetime(2022, 4, 10))}')
 
 if __name__ == "__main__":
     main()
