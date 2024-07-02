@@ -20,4 +20,4 @@ def date_with_data() -> Any:
 
 def test_wastes_by_category(date_with_data: Any) -> None:
     result = wastes_by_category(date_with_data, "food", datetime(2022, 4, 10))
-    assert result == {'amount': {2: -40.0}, 'category': 'food', 'total': -40.0}
+    assert result == {"amount": {2: -40.0}, "category": "food", "total": -40.0}

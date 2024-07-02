@@ -7,7 +7,7 @@ import requests
 import yfinance as yf
 from dotenv import load_dotenv
 
-from src.utils import read_files, setup_logging
+from src.utils import read_files, setup_logging, write_data
 
 load_dotenv()
 api_key = os.getenv("API_KEY")
@@ -155,3 +155,20 @@ def create_operations(greetin: Any, card_numbers: Any, total_sum: Any, cashbacks
         )
         logger.info("Successfully 'create_operations' operation!")
     return data
+
+
+def views_main() -> None:
+    # views
+    user_currency = input("Which currency would you like append to file?").split(", ")
+    user_stock = input("Which stock would you like append to file?").split(", ")
+    result = {"currency": user_currency, "stock": user_stock}
+    write_data("user_settings.json", result)
+    time = input("Write date and time(format for input - DD.MM.YYYY HH:MM):")
+    greetin = greeting(time if time else None)
+    card_numbers = get_card_number(read_files("../data/operations.xls"))
+    total_sum = total_sum_amount(read_files("../data/operations.xls"), card_numbers)
+    cashbacks = get_cashback(total_sum)
+    top = top_transactions(read_files("../data/operations.xls"))
+    created = create_operations(greetin, card_numbers, total_sum, cashbacks, top)
+    write_data("new.json", created)
+    print(f'Views result:\n{read_files("new.json")}')

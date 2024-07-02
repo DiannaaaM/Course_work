@@ -3,7 +3,7 @@ from typing import Any, Dict, Optional, Union
 
 import pandas as pd
 
-from src.utils import read_files, setup_logging, write_data
+from src.utils import setup_logging, write_data
 
 # reader_operations = read_files("../data/operations.xls")
 logger = setup_logging()
@@ -55,3 +55,8 @@ def wastes_by_category(transactions: pd.DataFrame, category: str, date: Optional
 
     logger.info(f"Successfully operation! Result - {result}")
     return result
+
+
+def reports_main() -> None:
+
+    print(f'Reports result: \n{wastes_by_category("../data/operations.xls", "food", datetime(2022, 4, 10))}')
