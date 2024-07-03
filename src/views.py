@@ -7,7 +7,8 @@ import requests
 import yfinance as yf
 from dotenv import load_dotenv
 
-from src.utils import read_files, setup_logging, write_data
+from src.logger import setup_logging
+from src.utils import read_files, write_data
 
 load_dotenv()
 api_key = os.getenv("API_KEY")

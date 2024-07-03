@@ -1,6 +1,7 @@
 from typing import Dict, List
 
-from src.utils import setup_logging, write_data
+from src.logger import setup_logging
+from src.utils import write_data
 
 logger = setup_logging()
 

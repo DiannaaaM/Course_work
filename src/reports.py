@@ -3,7 +3,8 @@ from typing import Any, Dict, Optional, Union
 
 import pandas as pd
 
-from src.utils import setup_logging, write_data
+from src.logger import setup_logging
+from src.utils import write_data
 
 # reader_operations = read_files("../data/operations.xls")
 logger = setup_logging()
